@@ -38,7 +38,12 @@ class Corsa {
 
   const pasoPor = [] // Tarea para casa (?)
 
-
+  // SUPER IMPORTANTE!! MENSAJE INITIALIZE SE EJECUTA SIEMPRE SIEMPRE EN EL MOMENTO QUE INTENTAS INSTANCIAR UNA CLASE. Sirve tanto para validar como para asignar valores!! Aunque se utiliza más para realizar validaciones dentro de las Clases.
+  method initialize() { // este método funciona como constructor en las clases.
+    if(not coloresValidos.listaColores().contains(color)) {
+      self.error(color.toString() + " no es un color válido")
+    } // Si esta validación no se cumple, no se instancia el objeto.
+  }
   method capacidad() = 4 // No hay forma de que esto cambie.
   method velocidadMaxima() = 150
   method peso() = 1300
@@ -105,7 +110,12 @@ object popular {
 
 // Clases: una vez que el código está en ejecución, yo puedo ir creando todos los objetos que quiera a partir de ese molde. Sin las clases, tenía que volver a tocar el código todo de vuelta etc, un lío.
 class Especial {
-
+  // cómo se valida que el mismo constructor no te deje instanciar esa clase si no se cumple la validación.
+  method initialize() { // este método funciona como constructor en las clases.
+    if(not coloresValidos.listaColores().contains(color)) {
+      self.error("el auto no tiene un color válido")
+    } // Si esta validación no se cumple, no se instancia el objeto.
+  }
   var property capacidad
   var property peso
   var property color
@@ -122,11 +132,25 @@ object topeVelocidadMaxima {
   var property tope = 200
 }
 
+
+//MANEJO DE EXCEPCIÓNES: MENSAJE ERROR
+// Creación de objeto externo para validar algo para todas las clases
+object coloresValidos {
+  const property listaColores = #{"rojo", "verde", "azul", "blanco"} // Lo transformo en property, al ser const solo crea listaColores() para poder acceder a lo que hay dentro. AL SER CONST SOLO DEFINE EL DE CONSULTA. !!!!!!!!
+
+}
+
 // Puedo hacerlo en un archivo aparte si quiero (el profe no lo hizo; lo hizo acá nomás)
+//metodo de excepcion: error sobre self
 class Dependencia {
-  const flota = []
+  const property flota = []
   var property empleados = 0 // Puedo no inicializarlo pero el profe lo inicializó xq sí
-  method agregarAFlota(rodado) {flota.add(rodado)}
+
+  method agregarAFlota(rodado) {
+   // if(not coloresValidos.listaColores().contains(rodado.color())) { self.error("el auto no tiene un color válido")}  // Si el objeto self no contiene el rodado.color(), va a saltar el mensaje error y va a cortar la ejecución. No va a ejecutar la línea de abajo.
+    // el ELSE no es necesario!! xq la validación ya me corta la ejecución x si sola, sin necesidad de agregar un else.
+    flota.add(rodado)}
+
   method quitarDeFlota(rodado) {flota.remove(rodado)}
   method pesoTotalFlota() = flota.sum({r=>r.peso()})
 
