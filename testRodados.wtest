@@ -1,4 +1,5 @@
 import rodados.*
+import pedidos.*
 
 describe "test de rodados" {
   //en vez de utilizar initialize, uso atributos comunes para todo el describe. Puedo definir objetos dentro del describe.
@@ -6,6 +7,9 @@ describe "test de rodados" {
                               //Si no lo defino ^ se va a crear con 0 empleados (xq ya lo inicialicé)
   const cultura = new Dependencia(empleados=31)
   const cachito = new Corsa(color="rojo") // Tenerlo como var es INNECESARIO. Coomo constante es mejor. xq siempre va a ser cachito, un corsa rojo.
+
+  const pedido1 = new Pedido(distancia=960,tiempoMaximo=8,pasajeros=4,coloresIncompatibles=#{"azul","negro"})
+  const pedido2 = new Pedido(distancia=960,tiempoMaximo=5,pasajeros=4,coloresIncompatibles=#{"azul","negro"})
 
   method initialize() {
     deportes.agregarAFlota(cachito)
@@ -20,6 +24,8 @@ describe "test de rodados" {
     cultura.agregarAFlota(trafic)
     trafic.interior(popular)
     trafic.motor(bataton)
+    deportes.agregarPedido(pedido1)
+    deportes.agregarPedido(pedido2)
   }
 
     test "deportes tiene peso total 6450" {
@@ -40,5 +46,29 @@ describe "test de rodados" {
 
     test "la capacidad total en color azul de deportes es 7" {
       assert.equals(7, deportes.capacidadTotalEnColor("azul"))
+    }
+
+    test "el total de pasajeros de los pedidos de deportes es 8" {
+      assert.equals(8,deportes.totalPasajerosEnPedidos())
+    }
+
+    test "el conjunto con el pedido2 no puede ser satisfechp" {
+      assert.equals(#{pedido2},deportes.pedidosNoPuedenSerSatisfechos()) // le paso el conjunto porque usamos un filter y el mensaje filter siempre devuelve una lista o un conjunto.
+    }
+
+    test "el pedido1 puede ser satisfecho por 1 rodado" {
+      assert.that(deportes.hayAlgunRodadoQueSatisfaceUnPedido(pedido1))
+    }
+
+    test "el pedido2 no puede ser satisfecho por ningún rodado" {
+      assert.notThat(deportes.hayAlgunRodadoQueSatisfaceUnPedido(pedido2))
+    }
+
+    test "todos los pedidos tienen el color azul como incompatible" {
+      assert.that(deportes.todosLosPedidosTienenIncompatible("azul"))
+    }
+
+    test "todos los pedidos no tienen el color rojo como incompatible" {
+      assert.notThat(deportes.todosLosPedidosTienenIncompatible("rojo"))
     }
 }

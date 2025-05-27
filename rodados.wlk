@@ -136,7 +136,7 @@ object topeVelocidadMaxima {
 //MANEJO DE EXCEPCIÓNES: MENSAJE ERROR
 // Creación de objeto externo para validar algo para todas las clases
 object coloresValidos {
-  const property listaColores = #{"rojo", "verde", "azul", "blanco"} // Lo transformo en property, al ser const solo crea listaColores() para poder acceder a lo que hay dentro. AL SER CONST SOLO DEFINE EL DE CONSULTA. !!!!!!!!
+  const property listaColores = #{"rojo", "verde", "azul", "blanco", "negro","beige"} // Lo transformo en property, al ser const solo crea listaColores() para poder acceder a lo que hay dentro. AL SER CONST SOLO DEFINE EL DE CONSULTA. !!!!!!!!
 
 }
 
@@ -144,7 +144,11 @@ object coloresValidos {
 //metodo de excepcion: error sobre self
 class Dependencia {
   const property flota = []
+  const pedidos = #{}
   var property empleados = 0 // Puedo no inicializarlo pero el profe lo inicializó xq sí
+
+  method agregarPedido(unPedido) {pedidos.add(unPedido)} //podriamos validar esto pero no vamos a ponernos exquisitos.
+  method quitarPedido(unPedido) {pedidos.remove(unPedido)}
 
   method agregarAFlota(rodado) {
    // if(not coloresValidos.listaColores().contains(rodado.color())) { self.error("el auto no tiene un color válido")}  // Si el objeto self no contiene el rodado.color(), va a saltar el mensaje error y va a cortar la ejecución. No va a ejecutar la línea de abajo.
@@ -172,6 +176,21 @@ class Dependencia {
   method capacidadFaltante() = (empleados - self.capacidadDeLaFlota()).max(0) // Controlo que no me de resultado negativo.
   method capacidadDeLaFlota() = flota.sum({r=>r.capacidad()})
   method esGrande() = empleados >= 40 && self.tieneAlMenosRodados(5)
+
+  //parte 3
+  method totalPasajerosEnPedidos() = pedidos.sum({p=>p.pasajeros()})
+  method pedidosNoPuedenSerSatisfechos() = 
+    pedidos.filter({p=> not self.hayAlgunRodadoQueSatisfaceUnPedido(p)})
+  method hayAlgunRodadoQueSatisfaceUnPedido(unPedido) =
+    flota.any({r=>unPedido.puedeSatisfacer(r)})
+  
+  method todosLosPedidosTienenIncompatible(unColor) =
+    pedidos.all({p=>p.coloresIncompatibles().contains(unColor)})
+
+  method relajarTodosLosPedidos() {
+    pedidos.forEach({p=>p.relajar()})
+  }
+  
 }
 // LOS OBJETOS QUE SE VAYAN A CREAR DE UNA MISMA CLASE, POR DEFINICIÓN, YA SON POLIMÓRFICOS.
 
